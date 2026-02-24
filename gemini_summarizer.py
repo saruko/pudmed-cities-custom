@@ -21,7 +21,8 @@ SUMMARIZE_PROMPT = (
 
 # リトライ設定
 MAX_RETRIES = 3
-RETRY_WAIT_SEC = 5
+RETRY_WAIT_SEC = 65      # 429 エラー時の待機秒数（API の指示に合わせて長め）
+INTER_REQUEST_WAIT_SEC = 5  # 通常リクエスト間のウェイト（無料枠 15RPM → 最低4秒）
 
 # モデル名
 MODEL_NAME = "gemini-2.0-flash"
@@ -60,12 +61,22 @@ def summarize_abstract(abstract: str) -> str:
             )
             summary = response.text.strip()
             logger.info(f"Gemini 要約完了 ({len(summary)} 文字)")
+            # リクエスト間のウェイト（レートリミット対策）
+            time.sleep(INTER_REQUEST_WAIT_SEC)
             return summary
         except Exception as e:
+            err_str = str(e)
             logger.warning(
                 f"Gemini API エラー (試行 {attempt}/{MAX_RETRIES}): {e}"
             )
             if attempt < MAX_RETRIES:
-                time.sleep(RETRY_WAIT_SEC * attempt)
+                # エラーメッセージから retry 秒数を抽出して待機
+                wait_sec = RETRY_WAIT_SEC
+                import re
+                m = re.search(r"retry in (\d+\.?\d*)s", err_str, re.IGNORECASE)
+                if m:
+                    wait_sec = float(m.group(1)) + 5  # 少し余裕を持たせる
+                logger.info(f"  {wait_sec:.0f} 秒後にリトライします...")
+                time.sleep(wait_sec)
 
     return "（Gemini API による要約に失敗しました）"
