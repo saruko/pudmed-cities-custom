@@ -1,6 +1,6 @@
 """
-PubMed 引用数急増アラートシステム — OpenCitations COCI API 連携
-DOI ベースで引用数の月次差分を算出する。
+PubMed 引用数検索システム — OpenCitations COCI API 連携
+DOI ベースで合計引用数を取得する。
 """
 
 import time

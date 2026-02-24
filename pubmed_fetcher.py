@@ -1,5 +1,5 @@
 """
-PubMed 引用数急増アラートシステム — PubMed API 連携
+PubMed 引用数検索システム — PubMed API 連携
 E-utilities (esearch / efetch) で論文メタデータを取得する。
 """
 

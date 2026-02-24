@@ -1,5 +1,5 @@
 """
-PubMed 引用数急増アラートシステム — メール通知
+PubMed 引用数検索システム — メール通知
 閾値超過論文のメール本文生成・Gmail SMTP 送信。
 """
 
@@ -89,7 +89,7 @@ def build_email_body(alerts: list[dict]) -> str:
 
     html_parts.append("""
     <div class="footer">
-        <p>このメールは PubMed 引用数急増アラートシステムにより自動送信されました。</p>
+        <p>このメールは PubMed 引用数検索システムにより自動送信されました。</p>
     </div>
     </body></html>
     """)
@@ -152,7 +152,7 @@ def send_alert_email(alerts: list[dict]) -> bool:
 def _build_plain_text(alerts: list[dict]) -> str:
     """プレーンテキスト版のメール本文を生成する。"""
     lines = [
-        "PubMed 引用数急増アラート",
+        "PubMed 引用数検索アラート",
         "=" * 40,
         f"検知された論文数: {len(alerts)} 件",
         "",

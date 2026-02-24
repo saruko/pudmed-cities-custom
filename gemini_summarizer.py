@@ -1,5 +1,5 @@
 """
-PubMed 引用数急増アラートシステム — Gemini API 要約
+PubMed 引用数検索システム — Gemini API 要約
 Gemini API でアブストラクトを日本語要約する。
 （google-genai SDK を使用）
 """
