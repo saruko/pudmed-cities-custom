@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# SQLite database (GitHub Actions で生成されるもの)
+*.db
+
+# 環境変数ファイル
+.env
+
+# IDE
+.vscode/
+.idea/
