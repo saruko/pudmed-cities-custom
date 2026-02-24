@@ -18,6 +18,8 @@ PubMed 引用数検索システム — エントリーポイント
 import argparse
 import logging
 import sys
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 import config
 import opencitations
@@ -59,6 +61,14 @@ def run(start_date: str = None, end_date: str = None,
 
     # ステップ 1: 設定読み込み
     logger.info("ステップ 1: 設定読み込み")
+    # デフォルトの検索期間: 直近1年（引数未指定時は自動計算）
+    now = datetime.now()
+    if start_date is None:
+        start_date = (now - relativedelta(years=1)).strftime("%Y/%m/%d")
+    if end_date is None:
+        end_date = now.strftime("%Y/%m/%d")
+    logger.info(f"  検索期間: {start_date} 〜 {end_date}")
+
     fields = config.DEFAULT_FIELDS
     if article_types is None:
         article_types = config.DEFAULT_ARTICLE_TYPES
