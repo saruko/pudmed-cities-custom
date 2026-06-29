@@ -73,7 +73,7 @@ def build_email_body(alerts: list[dict]) -> str:
             <h2>{i}. {title}</h2>
             <table class="meta-table">
                 <tr><td>ジャーナル</td><td>{journal}</td></tr>
-                <tr><td>インパクトファクター</td><td>{impact_factor}</td></tr>
+                <tr><td>2年平均被引用数 (OpenAlex)</td><td>{impact_factor}</td></tr>
                 <tr><td>公開日</td><td>{published_date}</td></tr>
                 <tr><td>PMID</td><td>{pmid}</td></tr>
                 <tr><td>DOI</td><td>{doi if doi else 'N/A'}</td></tr>
@@ -172,7 +172,7 @@ def _build_plain_text(alerts: list[dict]) -> str:
             f"--- 論文 {i} ---",
             f"タイトル: {title}",
             f"ジャーナル: {journal}",
-            f"インパクトファクター: {impact_factor}",
+            f"2年平均被引用数 (OpenAlex): {impact_factor}",
             f"公開日: {published_date}",
             f"PMID: {pmid}",
             f"DOI: {doi if doi else 'N/A'}",

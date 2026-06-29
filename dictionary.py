@@ -1,9 +1,11 @@
 """
 PubMed 引用数検索システム — 辞書ファイル
-日本語→MeSHクエリ変換辞書 / ジャーナル IF 辞書
+日本語→MeSHクエリ変換辞書 / ジャーナル被引用数取得
 """
 
 import logging
+
+from openalex import fetch_citedness
 
 logger = logging.getLogger(__name__)
 
@@ -69,26 +71,38 @@ def get_mesh_query(keyword: str) -> str | None:
 
 def get_impact_factor(journal_name: str) -> str | float:
     """
-    ジャーナル名からインパクトファクターを取得する。
-    完全一致を試み、失敗した場合は部分一致で検索する。
+    ジャーナル名から 2yr_mean_citedness（2年平均被引用数）を取得する。
+    OpenAlex API → ハードコード辞書（フォールバック）の順で検索。
 
     Args:
         journal_name: ジャーナル名
 
     Returns:
-        IF 値（float）、見つからない場合は 'N/A'
+        被引用数（float）、見つからない場合は 'N/A'
     """
     if not journal_name:
         return 'N/A'
 
-    # 完全一致
-    if journal_name in IMPACT_FACTOR_DICTIONARY:
-        return IMPACT_FACTOR_DICTIONARY[journal_name]
+    # OpenAlex API から取得
+    citedness = fetch_citedness(journal_name)
+    if citedness is not None:
+        return citedness
 
-    # 部分一致（大文字小文字無視）
-    journal_lower = journal_name.lower()
+    # フォールバック: ハードコード辞書
+    journal_lower = journal_name.strip().lower()
+
     for key, value in IMPACT_FACTOR_DICTIONARY.items():
-        if key.lower() in journal_lower or journal_lower in key.lower():
+        if key.lower() == journal_lower:
             return value
+
+    best_match: tuple[int, float] | None = None
+    for key, value in IMPACT_FACTOR_DICTIONARY.items():
+        key_lower = key.lower()
+        if key_lower in journal_lower:
+            if best_match is None or len(key_lower) > best_match[0]:
+                best_match = (len(key_lower), value)
+
+    if best_match is not None:
+        return best_match[1]
 
     return 'N/A'

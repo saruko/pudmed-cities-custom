@@ -10,7 +10,7 @@ PubMed 引用数検索システム — エントリーポイント
   6. 条件合致論文を SQLite DB に記録
   7. 未通知レコードを取得
   8. Gemini API でアブストラクトを日本語要約
-  9. ジャーナル IF を辞書から取得
+  9. ジャーナル 2yr_mean_citedness を OpenAlex API から取得
   10. メール本文を生成して Gmail 送信
   11. 送信済み論文の notified を更新
 """
@@ -184,7 +184,7 @@ def run(start_date: str = None, end_date: str = None,
         alert_record["summary"] = summary
         logger.info(f"  PMID={pmid}: 要約完了")
 
-    # ステップ 9: IF はメール生成時に dictionary.py から自動取得
+    # ステップ 9: 2yr_mean_citedness はメール生成時に OpenAlex API から自動取得
 
     # ステップ 10: メール送信
     logger.info("ステップ 10: アラートメール送信")
