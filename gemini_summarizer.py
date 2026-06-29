@@ -25,7 +25,7 @@ RETRY_WAIT_SEC = 65      # 429 エラー時の待機秒数（API の指示に合
 INTER_REQUEST_WAIT_SEC = 5  # 通常リクエスト間のウェイト（無料枠 15RPM → 最低4秒）
 
 # モデル名
-MODEL_NAME = "gemini-2.0-flash"
+MODEL_NAME = "gemini-3.1-flash-lite"
 
 
 def _get_client() -> genai.Client:
