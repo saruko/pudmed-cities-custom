@@ -90,27 +90,35 @@ python main.py -v
 python -m pytest tests/test_modules.py -v
 ```
 
-## GitHub Actions（自動実行）
+## GitHub Actions（自動実行）の設定方法
 
-### Secrets の設定
+GitHub Actionsを使用して毎週自動実行（または手動実行）させるためには、GitHubリポジトリの **Secrets** に設定項目を登録する必要があります。
 
-リポジトリの **Settings > Secrets and variables > Actions** で以下を追加:
+### 1. Secrets（環境変数）の登録手順
 
-- `GEMINI_API_KEY`
-- `ENTREZ_EMAIL`
-- `SMTP_SERVER`
-- `SMTP_PORT`
-- `SMTP_USER`
-- `SMTP_PASSWORD`
-- `RECIPIENT_EMAILS`
-- `SEARCH_KEYWORDS`（任意）
+1. GitHub上のリポジトリページを開きます。
+2. 上部タブの **Settings** をクリックします。
+3. 左サイドバーから **Secrets and variables** ＞ **Actions** を選択します。
+4. **New repository secret** ボタンをクリックし、以下の **Secret名（Name）** と **値（Value）** を1つずつ追加してください。
 
-### スケジュール
+| Secret名（Name） | 設定する値（Value） | 必須/任意 | 説明・例 |
+| :--- | :--- | :---: | :--- |
+| `GEMINI_API_KEY` | Google AI Studioで取得したAPIキー | **必須** | AI要約機能を使用するために必要です（`AIzaSy...`） |
+| `ENTREZ_EMAIL` | あなたのメールアドレス | **必須** | NCBI (PubMed) API利用時にユーザー識別用として送信されます |
+| `SMTP_SERVER` | 送信元メールのSMTPサーバー | **必須** | 例: `smtp.gmail.com` （Gmailを使用する場合） |
+| `SMTP_PORT` | SMTPポート番号 | **必須** | 例: `587` |
+| `SMTP_USER` | 送信元のメールアドレス | **必須** | 例: `your_email@gmail.com` |
+| `SMTP_PASSWORD` | 送信元のメールパスワード | **必須** | ※Gmailの場合はGoogleアカウントから「アプリパスワード」を生成してください |
+| `RECIPIENT_EMAILS` | レポートの宛先メールアドレス | **必須** | カンマ区切りで複数指定可能。 例: `to1@example.com,to2@example.com` |
+| `SEARCH_KEYWORDS` | デフォルトの検索キーワード | 任意 | 未設定の場合は `'眼科'` になります。日本語指定OK |
 
-- **自動実行**: 毎週日曜 JST 9:00（UTC 0:00）
-- **手動実行**: Actions タブ > 「PubMed 新着論文レポート」> 「Run workflow」
+### 2. 実行スケジュール
 
-手動実行時はキーワード・日数・デバッグモードを指定できます。
+- **自動実行**: 毎週日曜の **午前 9:00 (JST)** に自動で起動し、レポートメールを送信します。
+- **手動実行**: 
+  1. リポジトリの **Actions** タブをクリックします。
+  2. 左側のワークフロー一覧から **「PubMed 新着論文レポート」** を選択します。
+  3. **Run workflow** ボタンをクリックします。任意の検索キーワードや対象日数をその場で指定して実行することも可能です。
 
 ## ファイル構成
 
