@@ -32,6 +32,10 @@ data/openalex_cache.json
 # Claude Code local config
 claude.md
 CLAUDE.md
+.claude/
+
+# Pytest cache
+.pytest_cache/
 
 # OS
 .DS_Store
