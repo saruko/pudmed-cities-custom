@@ -56,6 +56,27 @@ class TestConfig:
             assert config.search_days == 14
             assert config.debug_mode is True
 
+    def test_from_env_with_empty_values(self):
+        """環境変数が空文字列のときにデフォルト値にフォールバックすること。"""
+        env = {
+            "GEMINI_MODEL": "",
+            "SEARCH_KEYWORDS": "",
+            "SEARCH_DAYS": "",
+            "MAX_RESULTS": "",
+            "SMTP_SERVER": "",
+            "SMTP_PORT": "",
+            "DEBUG_OUTPUT_FILE": "",
+        }
+        with patch.dict(os.environ, env, clear=True):
+            config = Config.from_env()
+            assert config.gemini_model == "gemini-3.1-flash-lite"
+            assert config.search_keywords == "眼科"
+            assert config.search_days == 7
+            assert config.max_results == 50
+            assert config.smtp_server == "smtp.gmail.com"
+            assert config.smtp_port == 587
+            assert config.debug_output_file == "debug_report.html"
+
     def test_validate_for_search(self):
         """検索バリデーション。"""
         config = Config(entrez_email="")

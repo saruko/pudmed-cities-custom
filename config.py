@@ -53,20 +53,29 @@ class Config:
             e.strip() for e in recipients_raw.split(",") if e.strip()
         ]
 
+        def _get_int_env(key: str, default: int) -> int:
+            val = os.getenv(key, "")
+            if not val.strip():
+                return default
+            try:
+                return int(val)
+            except ValueError:
+                return default
+
         return cls(
             gemini_api_key=os.getenv("GEMINI_API_KEY", ""),
-            gemini_model=os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite"),
+            gemini_model=os.getenv("GEMINI_MODEL", "") or "gemini-3.1-flash-lite",
             entrez_email=os.getenv("ENTREZ_EMAIL", ""),
-            search_keywords=os.getenv("SEARCH_KEYWORDS", "眼科"),
-            search_days=int(os.getenv("SEARCH_DAYS", "7")),
-            max_results=int(os.getenv("MAX_RESULTS", "50")),
-            smtp_server=os.getenv("SMTP_SERVER", "smtp.gmail.com"),
-            smtp_port=int(os.getenv("SMTP_PORT", "587")),
+            search_keywords=os.getenv("SEARCH_KEYWORDS", "") or "眼科",
+            search_days=_get_int_env("SEARCH_DAYS", 7),
+            max_results=_get_int_env("MAX_RESULTS", 50),
+            smtp_server=os.getenv("SMTP_SERVER", "") or "smtp.gmail.com",
+            smtp_port=_get_int_env("SMTP_PORT", 587),
             smtp_user=os.getenv("SMTP_USER", ""),
             smtp_password=os.getenv("SMTP_PASSWORD", ""),
             recipient_emails=recipients,
             debug_mode=os.getenv("DEBUG_MODE", "false").lower() == "true",
-            debug_output_file=os.getenv("DEBUG_OUTPUT_FILE", "debug_report.html"),
+            debug_output_file=os.getenv("DEBUG_OUTPUT_FILE", "") or "debug_report.html",
         )
 
     # ---- バリデーション ----
