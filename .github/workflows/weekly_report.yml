@@ -46,6 +46,7 @@ jobs:
           echo "=== 旧SDK除去 ==="
           pip uninstall -y google-generativeai 2>/dev/null || true
           echo "=== 依存パッケージインストール ==="
+          python -m pip install --upgrade pip
           pip install --no-cache-dir -r requirements.txt
           echo "=== インストール済みパッケージ ==="
           pip list | grep -i google
@@ -60,21 +61,25 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           RECIPIENT_EMAILS: ${{ secrets.RECIPIENT_EMAILS }}
           SEARCH_KEYWORDS: ${{ secrets.SEARCH_KEYWORDS || '眼科' }}
+          # 手動実行の入力は環境変数で受け取る（シェルのコードに埋め込むと、入力でコマンドを実行できてしまう）
+          INPUT_KEYWORD: ${{ github.event.inputs.keyword }}
+          INPUT_DAYS: ${{ github.event.inputs.days }}
+          INPUT_DEBUG: ${{ github.event.inputs.debug }}
         run: |
           # 手動実行時のパラメータを処理
-          ARGS=""
-          if [ "${{ github.event.inputs.keyword }}" != "" ]; then
-            ARGS="$ARGS --keyword '${{ github.event.inputs.keyword }}'"
+          ARGS=()
+          if [ -n "$INPUT_KEYWORD" ]; then
+            ARGS+=(--keyword "$INPUT_KEYWORD")
           fi
-          if [ "${{ github.event.inputs.days }}" != "" ] && [ "${{ github.event.inputs.days }}" != "7" ]; then
-            ARGS="$ARGS --days ${{ github.event.inputs.days }}"
+          if [ -n "$INPUT_DAYS" ] && [ "$INPUT_DAYS" != "7" ]; then
+            ARGS+=(--days "$INPUT_DAYS")
           fi
-          if [ "${{ github.event.inputs.debug }}" == "true" ]; then
-            ARGS="$ARGS --debug --output debug_report.html"
+          if [ "$INPUT_DEBUG" == "true" ]; then
+            ARGS+=(--debug --output debug_report.html)
           fi
 
-          echo "実行コマンド: python main.py $ARGS -v"
-          eval "python main.py $ARGS -v"
+          echo "実行コマンド: python main.py ${ARGS[*]} -v"
+          python main.py "${ARGS[@]}" -v
 
       - name: デバッグレポートをアーティファクトとして保存
         if: ${{ github.event.inputs.debug == 'true' }}
